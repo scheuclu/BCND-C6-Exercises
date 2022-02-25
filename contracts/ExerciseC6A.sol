@@ -14,6 +14,9 @@ contract ExerciseC6A {
     mapping(address => UserProfile) userProfiles; // Mapping for storing user profiles
 
     bool private operational = false;
+    
+    uint constant M = 2;
+    address[] multiCalls = new address[](0);
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -101,10 +104,21 @@ contract ExerciseC6A {
      *
      * When operational mode is disabled, all write transactions except for this one will fail
      */
-    function setOperatingStatus(bool mode)
-        external
-        requireContractOwner
-    {
-        operational = mode;
+    function setOperatingStatus(bool mode)  external {
+
+        bool isDuplicate = false;
+        for(uint c=0; c<multiCalls.length; c++) {
+            if (multiCalls[c] == msg.sender) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        require(!isDuplicate, "Caller has already called this function.");
+
+        multiCalls.push(msg.sender);
+        if (multiCalls.length >= M) {
+            operational = mode;      
+            multiCalls = new address[](0);      
+        }
     }
 }
