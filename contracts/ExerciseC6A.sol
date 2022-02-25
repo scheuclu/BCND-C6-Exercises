@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.8.12;
 
 contract ExerciseC6A {
 
@@ -27,11 +27,7 @@ contract ExerciseC6A {
     * @dev Constructor
     *      The deploying account becomes contractOwner
     */
-    constructor
-                                (
-                                ) 
-                                public 
-    {
+    constructor() {
         contractOwner = msg.sender;
     }
 
