@@ -13,6 +13,8 @@ contract ExerciseC6C {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
+    mapping(address => uint256) authorizedContracts;
+
     struct Profile {
         string id;
         bool isRegistered;
@@ -54,9 +56,23 @@ contract ExerciseC6C {
         _;
     }
 
+    modifier requireCallerAuthorized() {
+        require(authorizedContracts[msg.sender] == 1, "Caller is not authorized");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
+
+
+    function authorizeContract(address dataContract) requireContractOwner external {
+        authorizedContracts[dataContract] = 1;
+    }
+
+    function deauthorizeContract(address dataContract) requireContractOwner external {
+        authorizedContracts[dataContract] = 0;
+    }
 
     /**
      * @dev Check if an employee is registered
@@ -101,7 +117,7 @@ contract ExerciseC6C {
         string memory id,
         uint256 sales,
         uint256 bonus
-    ) internal requireContractOwner {
+    ) external {
         require(employees[id].isRegistered, "Employee is not registered.");
 
         employees[id].sales = employees[id].sales.add(sales);
