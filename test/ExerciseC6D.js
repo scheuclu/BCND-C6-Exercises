@@ -9,7 +9,6 @@ contract('ExerciseC6D', async (accounts) => {
   before('setup contract', async () => {
     config = await Test.Config(accounts);
     web3.eth.defaultAccount = accounts[0]
-    console.log(accounts);
 
     // Watch contract events
     const ON_TIME = 10;

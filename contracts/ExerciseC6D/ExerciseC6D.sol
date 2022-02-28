@@ -51,7 +51,6 @@ contract ExerciseC6D {
     // Track all oracle responses
     // Key = hash(index, flight, timestamp)
     mapping(bytes32 => uint) private oracleResponses;
-
     // Event fired each time an oracle submits a response
     event FlightStatusInfo(
         string flight,
@@ -134,7 +133,6 @@ contract ExerciseC6D {
         bytes32 key = keccak256(abi.encodePacked(index, flight, timestamp));
         
         uint responseInfoIndex  = createResponseInfo(msg.sender, true);
-        //uint oracleResponseIndex =  createOracleResponse(responseInfoIndex);
         oracleResponses[key] = responseInfoIndex;
 
         // CODE EXERCISE 2: Notify oracles that match the index value that they need to fetch flight status
@@ -176,6 +174,7 @@ contract ExerciseC6D {
         // Information isn't considered verified until at least MIN_RESPONSES
         // oracles respond with the *** same *** information
         if (responseInfos[oracleResponses[key]].responses[statusId].length >= MIN_RESPONSES) {
+
             // CODE EXERCISE 3: Prevent any more responses since MIN_RESPONSE threshold has been reached
             /* Enter code here */
 
