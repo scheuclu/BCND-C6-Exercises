@@ -4,22 +4,26 @@ var Test = require('../config/testConfig.js');
 
 contract('ExerciseC6D', async (accounts) => {
 
-  const TEST_ORACLES_COUNT = 20;
+  const TEST_ORACLES_COUNT = 8;
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
+    web3.eth.defaultAccount = accounts[0]
+    console.log(accounts);
 
     // Watch contract events
     const ON_TIME = 10;
-    let events = config.exerciseC6D.allEvents();
-    events.watch((error, result) => {
+
+    // Declare and Initialize a variable for event
+    ////var eventEmitted = false
+    config.exerciseC6D.allEvents(null, (error, result)=>{
       if (result.event === 'OracleRequest') {
         console.log(`\n\nOracle Requested: index: ${result.args.index.toNumber()}, flight:  ${result.args.flight}, timestamp: ${result.args.timestamp.toNumber()}`);
       } else {
         console.log(`\n\nFlight Status Available: flight: ${result.args.flight}, timestamp: ${result.args.timestamp.toNumber()}, status: ${result.args.status.toNumber() == ON_TIME ? 'ON TIME' : 'DELAYED'}, verified: ${result.args.verified ? 'VERIFIED' : 'UNVERIFIED'}`);
       }
     });
-
+    
     // Past events
     //events.get((error, logs) => {  });
 
@@ -32,8 +36,9 @@ contract('ExerciseC6D', async (accounts) => {
     let fee = await config.exerciseC6D.REGISTRATION_FEE.call();
 
     // ACT
-    for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
+    for(let a=1; a<TEST_ORACLES_COUNT-1; a++) {
       await config.exerciseC6D.registerOracle({ from: accounts[a], value: fee });
+      let result = await config.exerciseC6D.getOracle.call(accounts[a]);
     }
   });
 
@@ -78,8 +83,6 @@ contract('ExerciseC6D', async (accounts) => {
 
       }
     }
-
-
   });
 
 
